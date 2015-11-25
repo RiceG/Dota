@@ -1,3 +1,5 @@
 <?php
 
-echo "Hello Dota!;
+$hero="axe";
+echo "Hello Dota!<br>";
+echo "Hello ".$hero."!";
