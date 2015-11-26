@@ -77,7 +77,7 @@ foreach($divs as $div) {
             $hero->roles[]=$roles->item($i)->textContent;
         }
         $camp = $d2lis->item(4)->getElementsByTagName('p');//阵营
-        $hero->attr->camp=$camp->item(0)->textContent;
+        $hero->attr->camp=trim($camp->item(0)->textContent);
         $nick_name = $d2lis->item(6)->getElementsByTagName('p');//小名
         $hero->nick_name=$nick_name->item(0)->textContent;
     }
@@ -142,7 +142,12 @@ foreach($divs as $div) {
         $hero->bio_img=$div->childNodes->item(1)->childNodes->item(0)->getAttribute('href');
     }
 }
-echo $hero;
+echo $file_path='data/hero/';
+if($bio_img=file_get_contents($hero->bio_img)){
+    file_put_contents($file_path.$hero_name.'_bio.jpg',$bio_img);
+}
+
+file_put_contents($file_path.$hero_name.'.json',$hero->to_json());
 get_runtime($stime);
 
 
