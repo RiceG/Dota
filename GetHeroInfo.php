@@ -5,8 +5,10 @@
  * Date: 2015/11/23
  * Time: 19:23
  */
+//header('charset:UTF-8;');
+
 $stime=microtime(true); //获取程序开始执行的时间
-$hero_name='axe';
+$hero_name='night_stalker';
 //include('Util/simple_html_dom.php');
 include('Hero.php');
 $hero=new \Dota\Hero($hero_name);
@@ -19,26 +21,29 @@ function customError($errno, $errstr)
 }
 
 //set error handler
-set_error_handler("customError",E_WARNING);
-//error_reporting(0);
+//set_error_handler("customError",E_WARNING);
+error_reporting(0);
 
 $url='http://db.dota2.com.cn/hero/'.$hero_name.'/';
 $urlTarget="E:/Earthshaker.html";
 
 function get_content($url){
     $ch = curl_init();
+    //$header = array("content-type: application/x-www-form-urlencoded; charset=UTF-8");
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER,array("charset=UTF-8"));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ;
     curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ;
+//    curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
+    //curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
     $output=curl_exec($ch);
     curl_close($ch);
     return $output;
-    //return mb_convert_encoding($output,"utf-8","gbk");
+//    return mb_convert_encoding($output,'UTF-8', 'GBK,UTF-8,ASCII');
 }
 
 //消除html中name和id一样导致loadhtml出错的情况 去掉name
 $content=get_content($url);
+//echo $content;
 $rule=array('/name=\"hero_[0-9]{2}\"/');
 $html= preg_replace($rule,array(""),$content);
 
@@ -60,7 +65,7 @@ foreach($divs as $div) {
         $hero->img_vert = $name->item(1)->getAttribute("src");
         //英雄中文名
         $d1 = $name->item(2);
-        $hero->name_cn = $d1->textContent;
+        $hero->name_cn = trim($d1->textContent);
         $hero->icon = $d1->childNodes->item(0)->getAttribute("src");
         //英雄信息
         $d2lis = $name->item(4)->childNodes;
@@ -116,13 +121,13 @@ foreach($divs as $div) {
         $hero->attr->a_min=$dmg[0];
         $hero->attr->a_max=explode("\r\n",$dmg[1])[0];
         //攻击---距离
-        $hero->attr->ad=$dmg[3];
+        $hero->attr->ad=$arr[3];
         //护甲
         $str=$lis->item(4)->textContent;
         $hero->attr->armor=explode("\r\n",trim($str))[0];
         //移速
         $str=$lis->item(5)->textContent;
-        $hero->attr->armor=trim($str);
+        $hero->attr->ms=trim($str);
 }
     else if($div->getAttribute("class")&&$div->getAttribute('class')=="area_box"){
         $str=$div->getElementsByTagName("span");
