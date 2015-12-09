@@ -42,4 +42,4 @@ function get_heros()
     return $heros_url;
 }
 
-var_dump(get_heros());
+//var_dump(get_heros());
